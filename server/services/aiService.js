@@ -25,7 +25,7 @@ ${resumeText}
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "tencent/hy3:free",
+        model: "cohere/north-mini-code:free",
         messages: [
           {
             role: "user",
@@ -43,16 +43,32 @@ ${resumeText}
       }
     );
 
-    let text = response.data.choices[0].message.content;
+    console.log("===== OPENROUTER RESPONSE =====");
+    console.log(JSON.stringify(response.data, null, 2));
+    console.log("===============================");
 
-    text = text.replace(/```json/g, "");
-    text = text.replace(/```/g, "");
-    text = text.trim();
+    const text = response.data?.choices?.[0]?.message?.content;
 
-    return text;
+    if (!text) {
+      throw new Error(
+        "OpenRouter returned an empty response. Check the logged response above."
+      );
+    }
+
+    return text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
   } catch (err) {
     console.log("===== OPENROUTER ERROR =====");
-    console.log(JSON.stringify(err.response?.data, null, 2));
+
+    if (err.response) {
+      console.log(JSON.stringify(err.response.data, null, 2));
+    } else {
+      console.log(err.message);
+    }
+
     console.log("============================");
 
     throw err;
