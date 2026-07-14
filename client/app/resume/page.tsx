@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 interface Resume {
@@ -11,6 +12,8 @@ interface Resume {
 }
 
 export default function ResumePage() {
+  const router = useRouter();
+
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [resumes, setResumes] = useState<Resume[]>([]);
@@ -53,7 +56,7 @@ export default function ResumePage() {
       const formData = new FormData();
       formData.append("resume", file);
 
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:5000/api/resume/upload",
         formData,
         {
@@ -64,11 +67,17 @@ export default function ResumePage() {
         }
       );
 
-      alert("Resume uploaded successfully");
+      console.log(res.data);
+
+      // Save Resume ID
+      localStorage.setItem("resumeId", res.data.resume._id);
+
+      alert("Resume uploaded successfully!");
 
       setFile(null);
 
       fetchResumes();
+
     } catch (error) {
       console.error(error);
       alert("Upload failed");
@@ -128,25 +137,43 @@ export default function ResumePage() {
           </div>
         )}
 
-        <button
-          onClick={uploadResume}
-          disabled={loading}
-          className="
-            mt-8
-            w-full
-            bg-blue-600
-            text-white
-            py-3
-            rounded-lg
-            font-semibold
-            text-lg
-            hover:bg-blue-700
-            transition
-            disabled:bg-gray-400
-          "
-        >
-          {loading ? "Uploading..." : "Upload Resume"}
-        </button>
+        <div className="flex gap-4 mt-8">
+
+          <button
+            onClick={uploadResume}
+            disabled={loading}
+            className="
+              flex-1
+              bg-blue-600
+              text-white
+              py-3
+              rounded-lg
+              font-semibold
+              text-lg
+              hover:bg-blue-700
+              disabled:bg-gray-400
+            "
+          >
+            {loading ? "Uploading..." : "Upload Resume"}
+          </button>
+
+          <button
+            onClick={() => router.push("/resume-analysis")}
+            className="
+              flex-1
+              bg-green-600
+              text-white
+              py-3
+              rounded-lg
+              font-semibold
+              text-lg
+              hover:bg-green-700
+            "
+          >
+            Analyze Resume
+          </button>
+
+        </div>
 
         <hr className="my-10" />
 
@@ -177,11 +204,8 @@ export default function ResumePage() {
                   </h3>
 
                   <p className="text-gray-500 mt-2">
-                    Uploaded:
-                    {" "}
-                    {new Date(
-                      resume.createdAt
-                    ).toLocaleString()}
+                    Uploaded{" "}
+                    {new Date(resume.createdAt).toLocaleString()}
                   </p>
 
                 </div>
