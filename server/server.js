@@ -10,6 +10,10 @@ const authRoutes = require("./routes/authRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
 const path = require("path");
 const aiRoutes = require("./routes/aiRoutes");
+const codingRoutes = require("./routes/codingRoutes");
+const codeReviewRoutes = require("./routes/codeReviewRoutes");
+const interviewRoutes = require("./routes/interviewRoutes");
+const interviewReviewRoutes = require("./routes/interviewReviewRoutes");
 
 const app = express();
 
@@ -21,9 +25,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(morgan("dev"));
 
 app.use("/api/ai", aiRoutes);
-
+app.use("/api/coding", codingRoutes);
+app.use("/api/code", codeReviewRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
+app.use("/api/interview", interviewRoutes);
+app.use("/api/interview", interviewReviewRoutes);
 
 app.get("/", (req, res) => {
     res.json({
