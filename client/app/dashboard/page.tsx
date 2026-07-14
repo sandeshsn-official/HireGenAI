@@ -1,25 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import Navbar from "../../components/Navbar";
-import DashboardCard from "../../components/DashboardCard";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import Sidebar from "../../components/Sidebar";
+import DashboardCard from "../../components/DashboardCard";
+import Topbar from "../../components/Topbar";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
 
-    if (stored) {
-      setUser(JSON.parse(stored));
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center text-xl">
         Loading...
       </div>
     );
@@ -27,53 +27,64 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
+      <div className="flex min-h-screen bg-gray-100">
 
-      <Navbar />
+        {/* Sidebar */}
+        <Sidebar />
 
-      <main className="bg-gray-100 min-h-screen">
+        {/* Main Content */}
+        <main className="flex-1 p-10">
+            <Topbar name={user.name} />
 
-        <div className="max-w-7xl mx-auto p-10">
-
-          <h1 className="text-5xl font-bold text-blue-600">
-  Welcome, {user.name}
-</h1>
-
-<p className="mt-3 text-xl text-gray-700">
-  Role: <strong>{user.role}</strong>
-</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
 
             <DashboardCard
-              emoji="📄"
-              title="Resume Upload"
-              description="Upload your latest resume."
-            />
+  emoji="📄"
+  title="Resume Upload"
+  description="Upload and manage your resume."
+  href="/resume"
+/>
 
             <DashboardCard
-              emoji="🧠"
-              title="AI Resume Analysis"
-              description="Get an AI score and suggestions."
-            />
+  emoji="🧠"
+  title="AI Resume Analysis"
+  description="Get AI-powered resume feedback."
+  href="/resume-analysis"
+/>
 
             <DashboardCard
-              emoji="💻"
-              title="Coding Test"
-              description="Solve DSA problems online."
-            />
+  emoji="💻"
+  title="Coding Assessment"
+  description="Practice DSA and coding problems."
+  href="/coding"
+/>
 
             <DashboardCard
-              emoji="🎤"
-              title="AI Interview"
-              description="Practice with an AI interviewer."
-            />
+  emoji="🎤"
+  title="AI Interview"
+  description="Practice technical interviews with AI."
+  href="/interview"
+/>
 
           </div>
 
-        </div>
+          <div className="bg-white rounded-xl shadow-lg mt-10 p-6">
 
-      </main>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Recent Activity
+            </h2>
 
+            <ul className="mt-4 space-y-3 text-gray-600">
+              <li>✅ Resume not uploaded yet</li>
+              <li>💻 Coding assessment not started</li>
+              <li>🎤 AI interview not started</li>
+            </ul>
+
+          </div>
+
+        </main>
+
+      </div>
     </ProtectedRoute>
   );
 }

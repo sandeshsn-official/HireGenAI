@@ -4,18 +4,23 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
+const path = require("path");
+
+const app = express();
+
 
 dotenv.config();
 
 connectDB();
 
-const app = express();
-
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(morgan("dev"));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/resume", resumeRoutes);
 
 app.get("/", (req, res) => {
     res.json({
